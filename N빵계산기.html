@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>N빵 계산기</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px;
+    background: #F2F5F9;
+    font-family: 'Malgun Gothic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #222;
+  }
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.9rem;
+    margin: 8px 0 20px;
+  }
+  section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  h2 {
+    font-size: 1.25rem;
+    margin: 0 0 14px;
+  }
+  label {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  input {
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 14px;
+    border: 2px solid #DDE3EA;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  input:focus {
+    outline: none;
+    border-color: #4A90E2;
+  }
+  button {
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  #addBtn {
+    background: #4A90E2;
+    color: #fff;
+  }
+  #addBtn:active { background: #3A7BC8; }
+  #resetBtn {
+    background: #fff;
+    color: #E24A4A;
+    border: 2px solid #E24A4A;
+  }
+  #resetBtn:active { background: #FBECEC; }
+  .person-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 4px;
+    border-bottom: 1px solid #EEE;
+    font-size: 1.1rem;
+  }
+  .person-row:last-child { border-bottom: none; }
+  .person-name {
+    font-weight: bold;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .person-amount {
+    white-space: nowrap;
+  }
+  .delete-btn {
+    width: auto;
+    flex-shrink: 0;
+    background: #F5F5F5;
+    color: #E24A4A;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+  .delete-btn:active { background: #FBECEC; }
+  #emptyMsg {
+    text-align: center;
+    color: #999;
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+  .stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .stat-box {
+    flex: 1 1 120px;
+    background: #F7FAFF;
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-box .label {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 4px;
+  }
+  .stat-box .value {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #2C5FA8;
+  }
+  .settlement-item {
+    background: #F0F7FF;
+    border-left: 5px solid #4A90E2;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+  .settlement-item b { color: #1E4E9C; }
+  .ok-msg {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #2E9E5B;
+    padding: 10px 0;
+  }
+  .guide-msg {
+    text-align: center;
+    color: #999;
+    font-size: 1rem;
+    padding: 6px 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🧾 N빵 계산기</h1>
+
+  <section>
+    <h2>1. 사람 추가하기</h2>
+    <label for="nameInput">이름</label>
+    <input id="nameInput" type="text" placeholder="예: 철수">
+    <label for="amountInput">낸 금액 (원)</label>
+    <input id="amountInput" type="text" inputmode="numeric" placeholder="예: 50,000">
+    <button id="addBtn">+ 추가하기</button>
+  </section>
+
+  <section>
+    <h2>2. 참여자 목록</h2>
+    <div id="peopleList"></div>
+    <p id="emptyMsg">아직 추가된 사람이 없어요.</p>
+  </section>
+
+  <section>
+    <h2>3. 정산 결과 (자동 계산)</h2>
+    <div id="summaryBox"></div>
+    <div id="resultBox"></div>
+  </section>
+
+  <button id="resetBtn">전체 초기화</button>
+</div>
+
+<script>
+  const nameInput = document.getElementById('nameInput');
+  const amountInput = document.getElementById('amountInput');
+  const addBtn = document.getElementById('addBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const peopleList = document.getElementById('peopleList');
+  const emptyMsg = document.getElementById('emptyMsg');
+  const summaryBox = document.getElementById('summaryBox');
+  const resultBox = document.getElementById('resultBox');
+
+  let people = [];
+  let nextId = 1;
+
+  function formatNumber(num) {
+    return num.toLocaleString('ko-KR');
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // 금액 입력창에 실시간으로 천 단위 쉼표 붙이기
+  amountInput.addEventListener('input', () => {
+    const raw = amountInput.value.replace(/[^0-9]/g, '');
+    amountInput.value = raw === '' ? '' : formatNumber(Number(raw));
+  });
+
+  nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') amountInput.focus();
+  });
+  amountInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addPerson();
+  });
+
+  addBtn.addEventListener('click', addPerson);
+
+  function addPerson() {
+    const name = nameInput.value.trim();
+    const amount = Number(amountInput.value.replace(/,/g, ''));
+
+    if (!name) {
+      alert('이름을 입력해주세요.');
+      nameInput.focus();
+      return;
+    }
+    if (!amountInput.value || isNaN(amount) || amount < 0) {
+      alert('낸 금액을 올바르게 입력해주세요.');
+      amountInput.focus();
+      return;
+    }
+
+    people.push({ id: nextId++, name, amount });
+    nameInput.value = '';
+    amountInput.value = '';
+    nameInput.focus();
+
+    render();
+  }
+
+  function deletePerson(id) {
+    people = people.filter(p => p.id !== id);
+    render();
+  }
+
+  function render() {
+    renderList();
+    calculateSettlement();
+  }
+
+  function renderList() {
+    peopleList.innerHTML = '';
+    emptyMsg.style.display = people.length === 0 ? 'block' : 'none';
+
+    people.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'person-row';
+      row.innerHTML = `
+        <span class="person-name">${escapeHtml(p.name)}</span>
+        <span class="person-amount">${formatNumber(p.amount)}원</span>
+        <button class="delete-btn" data-id="${p.id}">삭제</button>
+      `;
+      peopleList.appendChild(row);
+    });
+
+    peopleList.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => deletePerson(Number(btn.dataset.id)));
+    });
+  }
+
+  function calculateSettlement() {
+    if (people.length === 0) {
+      summaryBox.innerHTML = '';
+      resultBox.innerHTML = '<p class="guide-msg">사람을 추가하면 여기에 정산 결과가 나와요.</p>';
+      return;
+    }
+    if (people.length === 1) {
+      summaryBox.innerHTML = '';
+      resultBox.innerHTML = '<p class="guide-msg">2명 이상 추가하면 정산 결과가 나와요.</p>';
+      return;
+    }
+
+    const total = people.reduce((sum, p) => sum + p.amount, 0);
+    const n = people.length;
+    const base = Math.floor(total / n);
+    const remainder = total % n;
+
+    summaryBox.innerHTML = `
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="label">총 합계</div>
+          <div class="value">${formatNumber(total)}원</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">인원수</div>
+          <div class="value">${n}명</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">1인당 금액</div>
+          <div class="value">${formatNumber(Math.round(total / n))}원</div>
+        </div>
+      </div>
+    `;
+
+    // 1원 단위 오차 없이 나누기 위해 나머지를 앞사람부터 1원씩 분배
+    const balances = people.map((p, idx) => {
+      const share = base + (idx < remainder ? 1 : 0);
+      return { name: p.name, balance: p.amount - share };
+    });
+
+    const debtors = balances.filter(b => b.balance < 0)
+      .map(b => ({ name: b.name, amt: -b.balance }))
+      .sort((a, b) => b.amt - a.amt);
+    const creditors = balances.filter(b => b.balance > 0)
+      .map(b => ({ name: b.name, amt: b.balance }))
+      .sort((a, b) => b.amt - a.amt);
+
+    const transactions = [];
+    let i = 0, j = 0;
+    while (i < debtors.length && j < creditors.length) {
+      const pay = Math.min(debtors[i].amt, creditors[j].amt);
+      if (pay > 0) {
+        transactions.push({ from: debtors[i].name, to: creditors[j].name, amount: pay });
+      }
+      debtors[i].amt -= pay;
+      creditors[j].amt -= pay;
+      if (debtors[i].amt === 0) i++;
+      if (creditors[j].amt === 0) j++;
+    }
+
+    if (transactions.length === 0) {
+      resultBox.innerHTML = '<p class="ok-msg">이미 모두 똑같이 냈어요! 정산할 금액이 없어요. 🎉</p>';
+    } else {
+      resultBox.innerHTML = transactions.map(t => `
+        <div class="settlement-item">
+          👉 <b>${escapeHtml(t.from)}</b>님이 <b>${escapeHtml(t.to)}</b>님에게
+          <b>${formatNumber(t.amount)}원</b> 보내기
+        </div>
+      `).join('');
+    }
+  }
+
+  resetBtn.addEventListener('click', () => {
+    if (people.length === 0) return;
+    if (confirm('모든 내용을 지울까요?')) {
+      people = [];
+      render();
+    }
+  });
+
+  // 초기 화면
+  render();
+</script>
+</body>
+</html>
