@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#4A90E2">
+<title>규장의 도구함</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    padding: 24px 16px 40px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #4A90E2 0%, #F2F5F9 260px);
+    font-family: 'Malgun Gothic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #222;
+  }
+  .container { max-width: 480px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    color: #fff;
+    font-size: 2rem;
+    margin: 12px 0 28px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  a.card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 22px;
+    text-decoration: none;
+    color: #222;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+    transition: transform 0.08s ease;
+  }
+  a.card:active { transform: scale(0.97); background: #F7FAFF; }
+  .icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: #F0F7FF;
+  }
+  .info { flex: 1; min-width: 0; }
+  .info .name {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .info .desc {
+    font-size: 0.95rem;
+    color: #777;
+    line-height: 1.4;
+  }
+  .arrow { flex-shrink: 0; font-size: 1.4rem; color: #ccc; }
+  .addCard {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.95rem;
+    padding: 18px;
+    border: 2px dashed #ccc;
+    border-radius: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🧰 규장의 도구함</h1>
+
+  <div class="grid">
+
+    <a class="card" href="https://whrbwkd.github.io/">
+      <div class="icon">🧮</div>
+      <div class="info">
+        <div class="name">N빵 계산기</div>
+        <div class="desc">여행·회식 비용, 누가 누구한테 얼마 보낼지 한 번에 정리</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="card" href="https://whrbwkd.github.io/weight-tracker/">
+      <div class="icon">⚖️</div>
+      <div class="info">
+        <div class="name">몸무게 기록 그래프</div>
+        <div class="desc">날짜별 몸무게를 적으면 그래프랑 주간 변화까지 자동으로</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <div class="addCard">+ 새 도구는 여기에 카드로 추가</div>
+
+  </div>
+</div>
+</body>
+</html>
