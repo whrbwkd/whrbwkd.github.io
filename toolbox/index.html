@@ -74,12 +74,76 @@
     border: 2px dashed #ccc;
     border-radius: 18px;
   }
+  .sectionTitle {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0 0 12px 4px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  }
+  .sectionTitle.dark { color: #444; }
+  section.automations { margin-bottom: 28px; }
+  a.autoCard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: #222;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 10px;
+  }
+  a.autoCard:active { background: #F7FAFF; }
+  .dot {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2E9E5B;
+  }
+  .autoInfo { flex: 1; min-width: 0; }
+  .autoInfo .name { font-size: 1.02rem; font-weight: bold; }
+  .autoInfo .schedule { font-size: 0.85rem; color: #888; margin-top: 2px; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🧰 규장의 도구함</h1>
 
+  <section class="automations">
+    <div class="sectionTitle">⚙️ 자동화 현황</div>
+
+    <a class="autoCard" href="https://github.com/whrbwkd/sihwang-kit/actions/workflows/morning-briefing.yml">
+      <div class="dot"></div>
+      <div class="autoInfo">
+        <div class="name">시황 자동 발송</div>
+        <div class="schedule">매일 7:30 · 깃허브 액션</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="autoCard" href="https://claude.ai/code/routines/trig_017hGN49wudFUkHt7HMh4hcu">
+      <div class="dot"></div>
+      <div class="autoInfo">
+        <div class="name">워드프레스 글감 자동생성</div>
+        <div class="schedule">매일 · 클로드 루틴</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="autoCard" href="https://claude.ai/code/routines/trig_01XZCpWDcrTYcsS3Qby3K7c8">
+      <div class="dot"></div>
+      <div class="autoInfo">
+        <div class="name">애드센스 주간 리포트</div>
+        <div class="schedule">매주 월 8:00 · 클로드 루틴</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+  </section>
+
+  <div class="sectionTitle dark">🧰 내 도구</div>
   <div class="grid">
 
     <a class="card" href="https://whrbwkd.github.io/">
